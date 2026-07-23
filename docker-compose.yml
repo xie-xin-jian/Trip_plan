@@ -1,0 +1,33 @@
+services:
+  backend:
+    build: ./backend
+    container_name: trip-backend
+    ports:
+      - "8001:8001"
+    environment:
+      - LLM_API_KEY=${LLM_API_KEY}
+      - OPENAI_API_KEY=${LLM_API_KEY}
+      - LLM_MODEL_ID=deepseek-chat
+      - OPENAI_MODEL=deepseek-chat
+      - LLM_BASE_URL=https://api.deepseek.com/v1
+      - OPENAI_BASE_URL=https://api.deepseek.com/v1
+      - AMAP_API_KEY=${AMAP_API_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-your-secret-key}
+      - HOST=0.0.0.0
+      - PORT=8001
+    volumes:
+      - ./backend/trip_planner.db:/app/trip_planner.db
+    restart: always
+
+  frontend:
+    build: ./frontend
+    container_name: trip-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always
+
+networks:
+  default:
+    name: trip-network
